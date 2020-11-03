@@ -1,24 +1,32 @@
 package org.uqbar;
 
-import java.text.NumberFormat;
-import java.util.Locale;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.eclipse.xtend.lib.annotations.Accessors;
+import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Pure;
+import org.uqbar.Conversion;
+import org.uqbar.UIFormatter;
 
 @Accessors
 @SuppressWarnings("all")
-public class ConversorDomain {
+public class ConversorDomain implements Serializable {
   private double millas = 0;
   
   private double kilometros = 0;
   
+  private List<Conversion> conversiones = CollectionLiterals.<Conversion>newArrayList();
+  
   public void convertir() {
     this.kilometros = (this.millas * 1.60934);
+    LocalDateTime _now = LocalDateTime.now();
+    Conversion _conversion = new Conversion(_now, this.millas, this.kilometros);
+    this.conversiones.add(_conversion);
   }
   
   public String kilometrosAsString() {
-    Locale _locale = new Locale("es");
-    return NumberFormat.getInstance(_locale).format(this.kilometros);
+    return UIFormatter.asString(this.kilometros);
   }
   
   @Pure
@@ -37,5 +45,14 @@ public class ConversorDomain {
   
   public void setKilometros(final double kilometros) {
     this.kilometros = kilometros;
+  }
+  
+  @Pure
+  public List<Conversion> getConversiones() {
+    return this.conversiones;
+  }
+  
+  public void setConversiones(final List<Conversion> conversiones) {
+    this.conversiones = conversiones;
   }
 }
