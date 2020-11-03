@@ -43,6 +43,7 @@ class ConversorView extends VerticalLayout {
 		val txtMillas = new NumberField("Millas") => [
 			addThemeName("bordered")
 			width = "250"
+			id = "txtMillas"
 		]
 
 		val lblKilometrosPrefijo = new Label("Kilómetros") => [
@@ -50,9 +51,11 @@ class ConversorView extends VerticalLayout {
 				set("fontWeight","bold")
 				set("fontSize", "small")
 			]
-		]
+		] 
 		
-		val lblKilometros = new Label("<Ingrese millas>")
+		val lblKilometros = new Label("<Ingrese millas>") => [
+			id = "lblKilometros"
+		]
 
 		val grdConversiones = new Grid(Conversion) => [
 			setItems(conversor.conversiones)
@@ -77,6 +80,7 @@ class ConversorView extends VerticalLayout {
 		]
 
 		val btnConvertir = new Button("Convertir") => [
+			id = "btnConvertir"
 			addClickListener([ e | 
 				conversor.millas = txtMillas.value
 				conversor.convertir
