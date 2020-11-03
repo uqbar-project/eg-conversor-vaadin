@@ -1,50 +1,27 @@
-# Project Base for Vaadin and Spring Boot
 
-This is an example project that can be used as a starting point to create your own Vaadin application with Spring Boot.
-It contains all the necessary configuration and some placeholder files to get you started.
+# Conversor en Vaadin
 
+[![Build Status](https://travis-ci.com/uqbar-project/eg-conversor-vaadin.svg?branch=master)](https://travis-ci.com/uqbar-project/eg-conversor-vaadin)
 
-## Running the Application
-There are two ways to run the application :  using `mvn spring-boot:run` or by running the `Application` class directly from your IDE.
+![demo](./images/demo.gif)
 
-You can use any IDE of your preference,but we suggest Eclipse or Intellij IDEA.
-Below are the configuration details to start the project using a `spring-boot:run` command. Both Eclipse and Intellij IDEA are covered.
+En este ejemplo mostramos el típico ejemplo del conversor en el framework Vaadin, donde
 
-#### Eclipse
-- Right click on a project folder and select `Run As` --> `Maven build..` . After that a configuration window is opened.
-- In the window set the value of the **Goals** field to `spring-boot:run` 
-- You can optionally select `Skip tests` checkbox
-- All the other settings can be left to default
+- el usuario puede ingresar millas
+- con el botón Convertir se convierte a kilómetros y se muestra en un label
+- adicionalmente tenemos una grilla que muestra el historial de conversiones que fuimos haciendo
 
-Once configurations are set clicking `Run` will start the application
+## Cómo es Vaadin
 
-#### Intellij IDEA
-- On the right side of the window, select Maven --> Plugins--> `spring-boot` --> `spring-boot:run` goal
-- Optionally, you can disable tests by clicking on a `Skip Tests mode` blue button.
+Vaadin integra componentes UI que tienen
 
-Clicking on the green run button will start the application.
+- una parte cliente (en Javascript)
+- y una contraparte server (que corre en una JDK, en nuestro caso en programada en Xtend)
 
-After the application has started, you can view your it at http://localhost:8080/ in your browser.
+![arquitectura de Vaadin](./images/architecture.svg)
 
 
-If you want to run the application locally in the production mode, use `spring-boot:run -Pproduction` command instead.
-### Running Integration Tests
-
-Integration tests are implemented using [Vaadin TestBench](https://vaadin.com/testbench). The tests take a few minutes to run and are therefore included in a separate Maven profile. We recommend running tests with a production build to minimize the chance of development time toolchains affecting test stability. To run the tests using Google Chrome, execute
-
-`mvn verify -Pit,production`
-
-and make sure you have a valid TestBench license installed.
-
-Profile `it` adds the following parameters to run integration tests:
-```sh
--Dwebdriver.chrome.driver=path_to_driver
--Dcom.vaadin.testbench.Parameters.runLocally=chrome
-```
-
-If you would like to run a separate test make sure you have added these parameters to VM Options of JUnit run configuration
-
-## Project overview
+## Estructura general del proyecto
 
 Project follow the Maven's [standard directory layout structure](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html):
 - Under the `srs/main/java` are located Application sources
@@ -57,8 +34,41 @@ Project follow the Maven's [standard directory layout structure](https://maven.a
    - All CSS styles used by the application are located under the root directory `frontend/styles`    
    - Templates would be stored under the `frontend/src`
 
+### Desarrollando del lado de Java
 
-## More Information and Next Steps
+### Desarrollando con el Designer de Vaadin (versión Pro)
+
+## Cómo se ejecuta la aplicación
+
+Desde la consola podés ejecutar el comando maven:
+
+```bash
+mvn spring-boot:run
+```
+
+O bien desde Eclipse, ejecutando el main que está en la clase `Application`.
+
+En cualquiera de los dos casos, el servidor que levanta es SpringBoot (se puede configurar un Jetty si están interesados en tener una versión más liviana).
+
+## Testeos de integración con Selenium
+
+Los tests de integración se implementan con [Vaadin TestBench](https://vaadin.com/testbench). Para ejecutar los tests con Google Chrome está el siguiente goal de Maven:
+
+```bash
+mvn verify -Pit,production
+```
+
+and make sure you have a valid TestBench license installed.
+
+Profile `it` adds the following parameters to run integration tests:
+```sh
+-Dwebdriver.chrome.driver=path_to_driver
+-Dcom.vaadin.testbench.Parameters.runLocally=chrome
+```
+
+If you would like to run a separate test make sure you have added these parameters to VM Options of JUnit run configuration
+
+## Links relacionados
 
 - Vaadin Basics [https://vaadin.com/docs](https://vaadin.com/docs)
 - More components at [https://vaadin.com/components](https://vaadin.com/components) and [https://vaadin.com/directory](https://vaadin.com/directory)
@@ -66,7 +76,3 @@ Project follow the Maven's [standard directory layout structure](https://maven.a
 - Using Vaadin and Spring [https://vaadin.com/docs/v14/flow/spring/tutorial-spring-basic.html](https://vaadin.com/docs/v14/flow/spring/tutorial-spring-basic.html) article
 - Join discussion and ask a question at [https://vaadin.com/forum](https://vaadin.com/forum)
 
-
-## Notes
-
-If you run application from a command line, remember to prepend a `mvn` to the command.
