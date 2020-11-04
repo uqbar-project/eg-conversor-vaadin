@@ -25,20 +25,13 @@ import com.vaadin.flow.server.PWA
  * browser tab/window.
  */
 @Route("")
-@PWA(name="Vaadin Application", shortName="Vaadin App", description="This is an example Vaadin application.", enableInstallPrompt=false)
+@PWA(name="Conversor Vaadin", shortName="Conversor", description="El viejo y confiable conversor", enableInstallPrompt=false)
 @CssImport("./styles/shared-styles.css")
 @CssImport(value="./styles/vaadin-text-field-styles.css", themeFor="vaadin-text-field")
 class ConversorView extends VerticalLayout {
 
 	val conversor = new ConversorDomain
 	
-	/**
-	 * Construct a new Vaadin view.
-	 * <p>
-	 * Build the initial UI state for the user accessing the application.
-	 * 
-	 * @param service The message service. Automatically injected Spring managed bean.
-	 */
 	new() {
 		val txtMillas = new NumberField("Millas") => [
 			addThemeName("bordered")

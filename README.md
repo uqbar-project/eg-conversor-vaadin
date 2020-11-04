@@ -20,23 +20,93 @@ Vaadin integra componentes UI que tienen
 
 ![arquitectura de Vaadin](./images/architecture.svg)
 
-
 ## Estructura general del proyecto
 
-Project follow the Maven's [standard directory layout structure](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html):
-- Under the `srs/main/java` are located Application sources
-   - `Application.java` is a runnable Java application class and a starting point
-   - `GreetService.java` is a  Spring service class
-   - `MainView.java` is a default view and entry point of the application
-- Under the `srs/test` are located test files
-- `src/main/resources` contains configuration files and static resources
-- The `frontend` directory in the root folder contains client-side dependencies and resource files
-   - All CSS styles used by the application are located under the root directory `frontend/styles`    
-   - Templates would be stored under the `frontend/src`
+El proyecto tiene la siguiente [estructura](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html):
+- `src/main/java`: están los fuentes de la aplicación
+   - `Application.java` es el punto de entrada de la aplicación Java que levanta Springboot y las rutas de acceso al servidor web
+   - `MainView.java` es el nombre de la vista a la que apunta por defecto, pero nosotros creamos
+   - `ConversorView.xtend` que es el container donde definimos nuestro conversor
+- En `src/test/java` se ubican los archivos de tests
+- `src/main/resources` contiene archivos de configuración y assets (íconos, imágenes, etc.)
+- la carpeta `frontend` en la raíz tiene las dependencias del lado del cliente, en particular
+   - `frontend/styles`: tiene los archivos css
+   - `frontend/src`: aquí están los **templates**, las vistas construidas con el DSL de Vaadin del lado del cliente (las que se arman a mano o con la herramienta Designer, como pueden ver más abajo)
 
-### Desarrollando del lado de Java
+## Desarrollando del lado de Java
+
+### Annotations
+
+En el ejemplo del conversor, podemos ver la definición que hicimos del lado de Java. Comencemos por las _annotations_:
+
+```java
+@Route("")
+@PWA(name="Conversor Vaadin", shortName="Conversor", description="El viejo y confiable conversor", enableInstallPrompt=false)
+@CssImport("./styles/shared-styles.css")
+@CssImport(value="./styles/vaadin-text-field-styles.css", themeFor="vaadin-text-field")
+```
+
+- la ruta `""` nos permite asociarla al raíz de nuestro proyecto, por eso `http://localhost:8080` levanta este componente. Si lo definimos como `@Route("/conversor")` entonces tendremos que usar la URL `http://localhost:8080/conversor`
+- `@PWA` nos permite configurarlo para diferentes dispositivos como una [progressive web application](https://web.dev/progressive-web-apps/), fuera del alcance del presente tutorial
+- luego agregamos los imports a los archivos de estilos necesarios para Vaadin
+
+### Container principal: uso de componentes de UI
+
+Vaadin trae una serie de componentes útiles para definir nuestro conversor, veamos por ejemplo cómo definir el container principal y el input que permite ingresar las millas:
+
+```xtend
+class ConversorView extends VerticalLayout {
+
+	val conversor = new ConversorDomain
+	
+	new() {
+		val txtMillas = new NumberField("Millas") => [
+			addThemeName("bordered")
+			width = "250"
+			id = "txtMillas"
+		]
+```
+
+La sintaxis con Java es un poco más verbosa pero la idea es muy similar:
+
+- `ConversorView` tiene por defecto un layout vertical, lo que se refleja con una relación de **herencia** (podría haber sido más interesante modelar un Container que a su vez tuviera un layout)
+- la vista tiene un dominio, pero el binding de Vaadin es bastante más limitado que el de otros frameworks como Angular (o Arena si lo pudiste conocer)
+- el componente de UI `NumberField` se sincroniza con una versión javascript, lo que permite establecer un ida y vuelta entre cliente y servidor que es "casi" transparente. Lo vemos en la solapa Network, donde se manda el json con la información de la vista cada vez que se renderiza nuevamente:
+
+![network](./images/network.gif)
+
+### Eventos de usuario
+
+Cuando el usuario dispara la conversión el listener recibe la notificación, lo que actualiza tanto el label como la grilla:
+
+```xtend
+val btnConvertir = new Button("Convertir") => [
+   id = "btnConvertir"
+   addClickListener([ e | 
+      conversor.millas = txtMillas.value
+      conversor.convertir
+      lblKilometros.text = conversor.kilometrosAsString
+      grdConversiones.getDataProvider().refreshAll
+   ])
+   addThemeVariants(ButtonVariant.LUMO_PRIMARY)
+   addClickShortcut(Key.ENTER)
+]
+```
+
+El lector puede ver cómo se implementa el resto de la página.
 
 ### Desarrollando con el Designer de Vaadin (versión Pro)
+
+Si bien ésta es una característica de la versión profesional (paga) de Vaadin, se puede ver una pequeña demo:
+
+![Vaadin designer](./images/vaadin_designer.gif)
+
+La vista se puede definir
+
+- con un DSL (un lenguaje para construir vistas propio de Vaadin)
+- o bien visualmente utilizando la herramienta Designer
+
+Para más información pueden ver [esta página](https://vaadin.com/designer)
 
 ## Cómo se ejecuta la aplicación
 
@@ -58,15 +128,11 @@ Los tests de integración se implementan con [Vaadin TestBench](https://vaadin.c
 mvn verify -Pit,production
 ```
 
-and make sure you have a valid TestBench license installed.
+Desde el Eclipse, se pueden ejecutar los tests con Selenium, que levanta el navegador y simula el pantalleo como vemos a continuación:
 
-Profile `it` adds the following parameters to run integration tests:
-```sh
--Dwebdriver.chrome.driver=path_to_driver
--Dcom.vaadin.testbench.Parameters.runLocally=chrome
-```
+![testing](./images/testing.gif)
 
-If you would like to run a separate test make sure you have added these parameters to VM Options of JUnit run configuration
+El lector puede ver el test de integración que generamos para este ejemplo.
 
 ## Links relacionados
 
@@ -75,4 +141,3 @@ If you would like to run a separate test make sure you have added these paramete
 - Download this and other examples at [https://vaadin.com/start](https://vaadin.com/start)
 - Using Vaadin and Spring [https://vaadin.com/docs/v14/flow/spring/tutorial-spring-basic.html](https://vaadin.com/docs/v14/flow/spring/tutorial-spring-basic.html) article
 - Join discussion and ask a question at [https://vaadin.com/forum](https://vaadin.com/forum)
-
