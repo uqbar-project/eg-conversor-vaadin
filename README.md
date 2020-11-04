@@ -1,8 +1,6 @@
 
 # Conversor en Vaadin
 
-[![Build Status](https://travis-ci.com/uqbar-project/eg-conversor-vaadin.svg?branch=master)](https://travis-ci.com/uqbar-project/eg-conversor-vaadin)
-
 ![demo](./images/demo.gif)
 
 En este ejemplo mostramos el típico ejemplo del conversor en el framework Vaadin, donde
@@ -56,15 +54,14 @@ Vaadin trae una serie de componentes útiles para definir nuestro conversor, vea
 
 ```xtend
 class ConversorView extends VerticalLayout {
+  val conversor = new ConversorDomain
 
-	val conversor = new ConversorDomain
-	
-	new() {
-		val txtMillas = new NumberField("Millas") => [
-			addThemeName("bordered")
-			width = "250"
-			id = "txtMillas"
-		]
+  new() {
+    val txtMillas = new NumberField("Millas") => [
+      addThemeName("bordered")
+      width = "250"
+      id = "txtMillas"
+    ]
 ```
 
 La sintaxis con Java es un poco más verbosa pero la idea es muy similar:
